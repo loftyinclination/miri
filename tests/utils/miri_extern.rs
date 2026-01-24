@@ -167,6 +167,9 @@ extern "Rust" {
     /// Miri-provided extern function to join a thread that was spawned by Miri.
     pub fn miri_thread_join(thread_id: usize) -> bool;
 
+    /// Name a Miri provided thread.
+    pub fn miri_set_thread_name(thread_id: usize, new_thread_name: *const core::ffi::c_char) -> bool;
+
     /// Indicate to Miri that this thread is busy-waiting in a spin loop.
     ///
     /// As far as Miri is concerned, this is equivalent to `yield_now`.

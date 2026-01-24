@@ -469,6 +469,24 @@ trait EvalContextExtPriv<'tcx>: crate::MiriInterpCxExt<'tcx> {
                     this.write_scalar(Scalar::from_bool(false), dest)?;
                 }
             }
+            "miri_set_thread_name" => {
+                let [thread_id, name] =
+                    this.check_shim_sig_lenient(abi, CanonAbi::Rust, link_name, args)?;
+
+                let thread = this.read_target_usize(thread_id)?;
+                let name = this.read_scalar(name)?.to_pointer(this)?;
+                let name = this.read_c_str(name)?.to_owned();
+
+                if let Ok(thread) = this.thread_id_try_from(thread) {
+                    this.set_thread_name(
+                        thread,
+                        name,
+                    );
+                    this.write_scalar(Scalar::from_bool(false), dest)?;
+                } else {
+                    this.write_scalar(Scalar::from_bool(false), dest)?;
+                }
+            }
             // Hint that a loop is spinning indefinitely.
             "miri_spin_loop" => {
                 let [] = this.check_shim_sig_lenient(abi, CanonAbi::Rust, link_name, args)?;

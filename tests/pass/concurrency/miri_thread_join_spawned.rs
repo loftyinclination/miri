@@ -17,6 +17,7 @@ extern "Rust" fn thread_start(_null: *mut ()) {
 fn miri_start(_argc: isize, _argv: *const *const u8) -> isize {
     unsafe {
         let thread_id = utils::miri_thread_spawn(thread_start, core::ptr::null_mut());
+        utils::miri_set_thread_name(thread_id, c"Non main thread".as_ptr());
         assert_eq!(utils::miri_thread_join(thread_id), true);
     }
     0
